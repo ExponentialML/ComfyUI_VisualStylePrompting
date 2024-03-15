@@ -19,8 +19,8 @@ class ApplyVisualStyle:
             } 
         }
 
-    RETURN_TYPES = ("CONDITIONING","CONDITIONING", "LATENT")
-    RETURN_NAMES = ("positive", "negative", "latents")
+    RETURN_TYPES = ("MODEL", "CONDITIONING","CONDITIONING", "LATENT")
+    RETURN_NAMES = ("model", "positive", "negative", "latents")
     
     FUNCTION = "apply_visual_style_prompt"
 
@@ -38,7 +38,7 @@ class ApplyVisualStyle:
         reference_latent = vae.encode(reference_image[:,:,:,:3])
         
         for n, m in model.model.diffusion_model.named_modules():
-            if m.__class__.__name__ == "CrossAttention":
+            if m.__class__.__name__  == "CrossAttention":
                 processor = VisualStyleProcessor(m, enabled=enabled)
                 setattr(m, 'forward', processor.visual_style_forward)
 
@@ -50,7 +50,7 @@ class ApplyVisualStyle:
         denoise_mask = torch.ones_like(latents)[:, :1, ...]
         denoise_mask[0] = 0.
 
-        return (conditioning_prompt, negative_prompt, {"samples": latents, "noise_mask": denoise_mask})    
+        return (model, conditioning_prompt, negative_prompt, {"samples": latents, "noise_mask": denoise_mask})    
 
 NODE_CLASS_MAPPINGS = {"ApplyVisualStyle": ApplyVisualStyle}
 
