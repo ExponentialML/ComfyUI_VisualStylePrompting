@@ -7,6 +7,9 @@ ComfyUI Version of "Visual Style Prompting with Swapping Self-Attention"
 ![image](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/assets/59846140/45a2e03a-791c-4b45-bbf1-4adaae7d837b)
 *origami bunny* / *a cute dog, origami style, rendered in unreal engine 5*
 
+![image](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/assets/59846140/1d3a6cd0-af25-42a6-a8a0-9793f85563d9)
+*ControlNet Depth example.*
+
 Implements the very basics of [Visual Style Prompting](https://github.com/naver-ai/Visual-Style-Prompting)https://github.com/naver-ai/Visual-Style-Prompting by Naver AI.
 
 ## Getting Started
