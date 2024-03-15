@@ -15,8 +15,9 @@ class ApplyVisualStyle:
                 "conditioning_prompt": ("CONDITIONING",),
                 "reference_image_prompt": ("CONDITIONING",),
                 "negative_prompt": ("CONDITIONING", ),
-                "enabled": ("BOOLEAN", {"default": True})
-            } 
+                "enabled": ("BOOLEAN", {"default": True}),
+                "denoise": ("FLOAT", {"default": 1., "min": 0., "max": 1., "step": 1e-2})
+            }
         }
 
     RETURN_TYPES = ("MODEL", "CONDITIONING","CONDITIONING", "LATENT")
@@ -32,7 +33,8 @@ class ApplyVisualStyle:
         conditioning_prompt, 
         reference_image_prompt,
         negative_prompt, 
-        enabled
+        enabled,
+        denoise
     ):
         self.model = model
         reference_latent = vae.encode(reference_image[:,:,:,:3])
@@ -42,13 +44,19 @@ class ApplyVisualStyle:
                 processor = VisualStyleProcessor(m, enabled=enabled)
                 setattr(m, 'forward', processor.visual_style_forward)
 
-        conditioning_prompt = reference_image_prompt + conditioning_prompt 
+        conditioning_prompt = reference_image_prompt + conditioning_prompt
         negative_prompt = negative_prompt * 2 
-        latents = torch.zeros_like(reference_latent)
+
+        latents = torch.zeros_like(reference_latent) 
         latents = torch.cat([latents] * 2)
 
-        latents[::2] = reference_latent
-        denoise_mask = torch.ones_like(latents)[:, :1, ...]
+        if denoise < 1.0:
+            latents[::1] = reference_latent
+        else:
+            latents[::2] = reference_latent
+
+        denoise_mask = torch.ones_like(latents)[:, :1, ...] * denoise
+
         denoise_mask[0] = 0.
 
         return (model, conditioning_prompt, negative_prompt, {"samples": latents, "noise_mask": denoise_mask})    
