@@ -46,7 +46,7 @@ class ApplyVisualStyle:
         latents = torch.zeros_like(reference_latent)
         latents = torch.cat([latents] * 2)
 
-        latents[0] = reference_latent
+        latents[::2] = reference_latent
         denoise_mask = torch.ones_like(latents)[:, :1, ...]
         denoise_mask[0] = 0.
 
