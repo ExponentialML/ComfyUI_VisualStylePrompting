@@ -42,7 +42,8 @@ class ApplyVisualStyle:
                 processor = VisualStyleProcessor(m, enabled=enabled)
                 setattr(m, 'forward', processor.visual_style_forward)
 
-        conditioning_prompt[0][0][1:] = reference_image_prompt[0][0][1:]
+        conditioning_prompt = reference_image_prompt + conditioning_prompt 
+        negative_prompt = negative_prompt * 2 
         latents = torch.zeros_like(reference_latent)
         latents = torch.cat([latents] * 2)
 
