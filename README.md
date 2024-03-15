@@ -18,3 +18,8 @@ This has currently only been tested with 1.5 based models.
 - `conditioning_prompt`: The original positive prompt that you will transfer the style **to**
 - `reference_image_prompt`: The prompt that describes the reference. You must invoke this pormpt in the conditioning prompt.
 - `enabled`: Enables or disables the effect. Note that this node will still be hooked even after disabling unless you remove it.
+
+## Notes
+
+- Currently, this method utilized the VAE Encode & Inpaint method as it needs to iteralively denoise on each step.
+Due to how this method works, you'll always get two outputs (the original next to the styled.
