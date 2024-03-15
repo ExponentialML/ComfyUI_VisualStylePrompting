@@ -51,7 +51,7 @@ class ApplyVisualStyle:
         latents = torch.cat([latents] * 2)
 
         if denoise < 1.0:
-            latents[::1] = reference_latent
+            latents[::1] = reference_latent[:1]
         else:
             latents[::2] = reference_latent
 
