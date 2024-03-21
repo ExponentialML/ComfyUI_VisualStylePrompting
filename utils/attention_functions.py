@@ -41,7 +41,7 @@ class VisualStyleProcessor(object):
         module_self, 
         keys_scale: float = 1.0,
         enabled: bool = True, 
-        enabled_animatediff: bool = True,
+        enabled_animatediff: bool = False,
         adain_queries: bool = True,
         adain_keys: bool = True,
         adain_values: bool = False 
@@ -81,6 +81,7 @@ class VisualStyleProcessor(object):
             out = optimized_attention_masked(q, k, v, self.module_self.heads, mask)
         return self.module_self.to_out(out)
 
+    # TODO
     def visual_style_forward_ad(self, x, context=None, value=None, mask=None):
         q = module_self.to_q(x)
         context = default(context, x)
