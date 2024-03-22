@@ -38,3 +38,5 @@ This has currently only been tested with 1.5 based models.
 
 - Currently, this method utilized the VAE Encode & Inpaint method as it needs to iteralively denoise on each step.
 Due to how this method works, you'll always get two outputs. To remove the reference latent from the output, simple use a Batch Index Select node.
+
+- For legacy funcionality, please pull this PR: https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/tree/712a41579e730c5db87d68c2dcde4e92c48ab2cc
