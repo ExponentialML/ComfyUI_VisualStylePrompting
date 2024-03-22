@@ -54,6 +54,9 @@ class VisualStyleProcessor(object):
         self.adain_keys = adain_keys
         self.adain_values = adain_values
 
+    def __call__(self, x, context, value, mask=None):
+        return self.visual_style_forward(x, context, value, mask)
+
     def visual_style_forward(self, x, context, value, mask=None):
         q = self.module_self.to_q(x)
         context = default(context, x)
