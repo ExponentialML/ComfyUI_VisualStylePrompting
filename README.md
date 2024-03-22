@@ -1,7 +1,8 @@
 # ComfyUI_VisualStylePrompting
 ComfyUI Version of "Visual Style Prompting with Swapping Self-Attention"
 
-![image](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/assets/59846140/586304a7-cf61-4f22-8e7d-8bcacbce50de)
+![image](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/assets/59846140/a4272a7a-5f9a-4e34-a1b7-9cb92cf7ef71)
+*credits to @pamparamm*
 
 > [!NOTE]  
 > This is WIP.
@@ -16,8 +17,8 @@ Clone the reposlitory into your `custom_nodes` folder, and you'll see the node. 
 This has currently only been tested with 1.5 based models.
 
 - `reference_image`: The image you wish to reference,
-- `visual_style_prompt`: You **must** use the *Visual Style Prompt Encode* node. This will combine the positive and reference prompts for you.
-- `reference_image_prompt`: The prompt that describes the reference. You must invoke this pormpt in the conditioning prompt.
+- `positive`: The positive prompt to use as conditioning.
+- `reference_cond`: The prompt that describes the reference.
 - `enabled`: Enables or disables the effect. Note that this node will still be hooked even after disabling unless you remove it.
 - `denoise`: Works the same way Img2Img works, but utilized with reference and / or init images (this is experimental).
 - `input_blocks`: Focuses attention on the encoder layers.
