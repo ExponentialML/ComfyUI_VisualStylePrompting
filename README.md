@@ -25,9 +25,6 @@ This has currently only been tested with 1.5 based models.
 - `middle_block`: Focuses attention on the middle layers.
 - `output_blocks`: Focuses attention on the decoder layers.
 
-> [!NOTE]
-> `positive` and `reference_cond` must have equal amount of chunks. Mismatch will cause `RuntimeError: Sizes of tensors must match except in dimension 0.`
-
 > [!TIP]
 > In order to get the best results (matching legacy functionality), you must use the same prompt for `positive` and `reference_cond`.
 >
