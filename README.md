@@ -1,19 +1,19 @@
 # ComfyUI_VisualStylePrompting
 ComfyUI Version of "Visual Style Prompting with Swapping Self-Attention"
 
-![image](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/assets/59846140/a4272a7a-5f9a-4e34-a1b7-9cb92cf7ef71)
+![image](workflows/workflow_simple.png)
 *credits to @pamparamm*
 
-> [!NOTE]  
+> [!NOTE]
 > This is WIP.
-> 
+>
 > Major changes were made. Please make sure to update your workflows. An updated workflow can be found in the `workflows` directory.
 
-Implements the very basics of [Visual Style Prompting](https://github.com/naver-ai/Visual-Style-Prompting)https://github.com/naver-ai/Visual-Style-Prompting by Naver AI.
+Implements the very basics of [Visual Style Prompting](https://github.com/naver-ai/Visual-Style-Prompting) by Naver AI.
 
 ## Getting Started
 
-Clone the reposlitory into your `custom_nodes` folder, and you'll see the node. It should be placed between your sampler and inputs like the example image.
+Clone the repository into your `custom_nodes` folder, and you'll see `Apply Visual Style Prompting` node. It should be placed between your sampler and inputs like the example image.
 This has currently only been tested with 1.5 based models.
 
 - `reference_image`: The image you wish to reference,
@@ -25,18 +25,19 @@ This has currently only been tested with 1.5 based models.
 - `middle_block`: Focuses attention on the middle layers.
 - `output_blocks`: Focuses attention on the decoder layers.
 
-> [!TIP]  
-> In order to get the best results, you must engineer both the positive and reference image prompts correctly. Focus on the details you want to derive from the image reference, and the details you wish to see in the output.
-> 
-> Based on the hero image above, the positive and prompts were as follows:
+> [!NOTE]
+> `positive` and `reference_cond` must have equal amount of chunks. Mismatch will cause `RuntimeError: Sizes of tensors must match except in dimension 0.`
+
+> [!TIP]
+> In order to get the best results (matching legacy functionality), you must use the same prompt for `positive` and `reference_cond`.
 >
-> `kitten art, lines and colors, 3d art, unreal engine 5 render, colors, deep colors, shading, canon 60d`, `lines and colors`.
-> 
-> For this generation, I only wanted the lines and colors of the reference.
+> The example workflow uses the following for both conds:
+>
+> `orange fox, origami, deep colors, shading, canon 60d`.
 
 ## Notes
 
 - Currently, this method utilized the VAE Encode & Inpaint method as it needs to iteralively denoise on each step.
 Due to how this method works, you'll always get two outputs. To remove the reference latent from the output, simple use a Batch Index Select node.
 
-- For legacy funcionality, please pull this [PR](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/tree/712a41579e730c5db87d68c2dcde4e92c48ab2cc).
+- For legacy functionality, please pull this [PR](https://github.com/ExponentialML/ComfyUI_VisualStylePrompting/tree/712a41579e730c5db87d68c2dcde4e92c48ab2cc).
