@@ -2,7 +2,7 @@ import comfy
 import torch
 
 from .utils.attention_functions import VisualStyleProcessor
-from .utils.cond_functions import copy_cond
+from .utils.cond_functions import cat_cond
 
 
 class ApplyVisualStyle:
@@ -11,6 +11,7 @@ class ApplyVisualStyle:
         return {
             "required": {
                 "model": ("MODEL",),
+                "clip": ("CLIP", ),
                 "vae": ("VAE", ),
                 "reference_image": ("IMAGE",),
                 "reference_cond": ("CONDITIONING",),
@@ -54,6 +55,7 @@ class ApplyVisualStyle:
     def apply_visual_style_prompt(
         self,
         model: comfy.model_patcher.ModelPatcher,
+        clip,
         vae,
         reference_image,
         reference_cond,
@@ -66,10 +68,6 @@ class ApplyVisualStyle:
         output_blocks,
         init_image = None
     ):
-        positive = copy_cond(positive)
-        reference_cond = copy_cond(reference_cond)
-        negative = copy_cond(negative)
-
         reference_latent = vae.encode(reference_image[:,:,:,:3])
 
         block_choices = self.get_block_choices(input_blocks, middle_block, output_blocks)
@@ -84,8 +82,8 @@ class ApplyVisualStyle:
                     processor = VisualStyleProcessor(m, enabled=is_enabled)
                     setattr(m, 'forward', processor)
 
-        positive[0][0] = torch.cat([reference_cond[0][0], positive[0][0]])
-        negative[0][0] = torch.cat([negative[0][0]] * 2)
+        positive_cat = cat_cond(clip, reference_cond, positive)
+        negative_cat = cat_cond(clip, negative, negative)
 
         latents = torch.zeros_like(reference_latent)
         latents = torch.cat([latents] * 2)
@@ -99,7 +97,7 @@ class ApplyVisualStyle:
 
         denoise_mask[::2] = 0.
 
-        return (model, positive, negative, {"samples": latents, "noise_mask": denoise_mask})
+        return (model, positive_cat, negative_cat, {"samples": latents, "noise_mask": denoise_mask})
 
 NODE_CLASS_MAPPINGS = {
     "ApplyVisualStyle": ApplyVisualStyle,
