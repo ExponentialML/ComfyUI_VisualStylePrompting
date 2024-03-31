@@ -16,9 +16,9 @@ Implements the very basics of [Visual Style Prompting](https://github.com/naver-
 Clone the repository into your `custom_nodes` folder, and you'll see `Apply Visual Style Prompting` node. It should be placed between your sampler and inputs like the example image.
 This has currently only been tested with 1.5 based models.
 
-- `reference_image`: The image you wish to reference,
-- `positive`: The positive prompt to use as conditioning.
-- `reference_cond`: The prompt that describes the reference.
+- `reference_latent`: VAE-encoded image you wish to reference,
+- `positive`: Positive conditioning describing output image.
+- `reference_cond`: Conditioning describing reference image.
 - `enabled`: Enables or disables the effect. Note that this node will still be hooked even after disabling unless you remove it.
 - `denoise`: Works the same way Img2Img works, but utilized with reference and / or init images (this is experimental).
 - `input_blocks`: Focuses attention on the encoder layers.

@@ -11,9 +11,8 @@ class ApplyVisualStyle:
         return {
             "required": {
                 "model": ("MODEL",),
-                "clip": ("CLIP", ),
-                "vae": ("VAE", ),
-                "reference_image": ("IMAGE",),
+                "clip": ("CLIP",),
+                "reference_latent": ("LATENT",),
                 "reference_cond": ("CONDITIONING",),
                 "positive": ("CONDITIONING",),
                 "negative": ("CONDITIONING",),
@@ -56,8 +55,7 @@ class ApplyVisualStyle:
         self,
         model: comfy.model_patcher.ModelPatcher,
         clip,
-        vae,
-        reference_image,
+        reference_latent,
         reference_cond,
         positive,
         negative,
@@ -68,8 +66,7 @@ class ApplyVisualStyle:
         output_blocks,
         init_image = None
     ):
-        reference_latent = vae.encode(reference_image[:,:,:,:3])
-
+        reference_samples = reference_latent["samples"]
         block_choices = self.get_block_choices(input_blocks, middle_block, output_blocks)
 
         for n, m in model.model.diffusion_model.named_modules():
@@ -85,13 +82,13 @@ class ApplyVisualStyle:
         positive_cat = cat_cond(clip, reference_cond, positive)
         negative_cat = cat_cond(clip, negative, negative)
 
-        latents = torch.zeros_like(reference_latent)
+        latents = torch.zeros_like(reference_samples)
         latents = torch.cat([latents] * 2)
 
         if denoise < 1.0:
-            latents[::1] = reference_latent[:1]
+            latents[::1] = reference_samples[:1]
         else:
-            latents[::2] = reference_latent
+            latents[::2] = reference_samples
 
         denoise_mask = torch.ones_like(latents)[:, :1, ...] * denoise
 
