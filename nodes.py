@@ -64,7 +64,11 @@ class ApplyVisualStyle:
         input_blocks,
         middle_block,
         output_blocks,
-        init_image = None
+        init_image = None,
+        skip_input_layers=0,
+        skip_middle_layers=0,
+        skip_output_layers=0
+
     ):
         positive = copy_cond(positive)
         reference_cond = copy_cond(reference_cond)
@@ -74,10 +78,27 @@ class ApplyVisualStyle:
 
         block_choices = self.get_block_choices(input_blocks, middle_block, output_blocks)
 
+
+        layer_indexes = {
+            "input": 0,
+            "middle": 0,
+            "output": 0
+        }
+
+        n_skip_per_block = {
+            "input": skip_input_layers,
+            "middle": skip_middle_layers,
+            "output": skip_output_layers
+        }
+
         for n, m in model.model.diffusion_model.named_modules():
             if m.__class__.__name__  == "CrossAttention":
                 is_enabled = self.activate_block_choice(n, block_choices)
-
+                if is_enabled:
+                    block_name = n.split("_")[0]
+                    if layer_indexes[block_name] < n_skip_per_block[block_name]:
+                        is_enabled = False
+                    layer_indexes[block_name] += 1
                 if hasattr(m.forward, 'module_self'):
                     m.forward.enabled = is_enabled and enabled
                 else:
