@@ -19,8 +19,11 @@ class ApplyVisualStyle:
                 "enabled": ("BOOLEAN", {"default": True}),
                 "denoise": ("FLOAT", {"default": 1., "min": 0., "max": 1., "step": 1e-2}),
                 "input_blocks": ("BOOLEAN", {"default": False}),
+                "skip_input_layers": ("INT", {"default": 24, "min": 0, "max": 48, "step": 1}),
                 "middle_block": ("BOOLEAN", {"default": False}),
+                "skip_middle_layers": ("INT", {"default": 1, "min": 0, "max": 2, "step": 1}),
                 "output_blocks": ("BOOLEAN", {"default": True}),
+                "skip_output_layers": ("INT", {"default": 24, "min": 0, "max": 72, "step": 1}),
             },
             "optional": {
                 "init_image": ("IMAGE",),
