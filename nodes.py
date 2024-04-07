@@ -94,8 +94,9 @@ class ApplyVisualStyle:
             "output": skip_output_layers
         }
 
+        class_names = set()
         for n, m in model.model.diffusion_model.named_modules():
-            if m.__class__.__name__  == "CrossAttention":
+            if m.__class__.__name__ == "CrossAttention":
                 is_enabled = self.activate_block_choice(n, block_choices)
                 if is_enabled:
                     block_name = n.split("_")[0]
@@ -113,15 +114,11 @@ class ApplyVisualStyle:
 
         latents = torch.zeros_like(reference_latent)
         latents = torch.cat([latents] * 2)
-
-        if denoise < 1.0:
-            latents[::1] = reference_latent[:1]
-        else:
-            latents[::2] = reference_latent
+        latents[0] = reference_latent
 
         denoise_mask = torch.ones_like(latents)[:, :1, ...] * denoise
 
-        denoise_mask[::2] = 0.
+        denoise_mask[0] = 0.
 
         return (model, positive, negative, {"samples": latents, "noise_mask": denoise_mask})
 
