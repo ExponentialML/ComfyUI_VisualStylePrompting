@@ -17,7 +17,7 @@ def copy_cond(cond: list[tuple[torch.Tensor, dict]], device="cpu") -> list[list[
 
 def cat_cond(clip, *conds: list[list[torch.Tensor | dict]], device="cpu") -> list[list[torch.Tensor | dict]]:
     output = copy_cond(conds[0], device=device)
-    cond_tensors = list(map(lambda c: c[0][0], conds))
+    cond_tensors = list(map(lambda c: c[0][0].to(device=device), conds))
 
     chunk_size = 77
     chunks = list(map(lambda c: c.shape[1] // chunk_size, cond_tensors))
