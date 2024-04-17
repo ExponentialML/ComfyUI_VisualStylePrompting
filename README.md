@@ -29,11 +29,15 @@ This has currently only been tested with 1.5 based models.
 - `skip_output_layers`: Number of layers in the output block that will **not** have swapping self-attention applied to them.
 
 > [!TIP]
-> In order to get the best results (matching legacy functionality), you must use the same prompt for `positive` and `reference_cond`.
+> In order to get the best results, you must engineer both `positive` and `reference_cond` prompts correctly. Focus on the details you want to derive from the image reference, and the details you wish to see in the output.
 >
-> The example workflow uses the following for both conds:
+> The example workflow uses the following for the `positive` cond:
 >
 > `orange fox, origami, deep colors, shading, canon 60d`.
+>
+> And for the `reference_cond`:
+>
+> `origami figurine`
 
 ## Notes
 
