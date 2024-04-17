@@ -42,8 +42,8 @@ class VisualStyleProcessor(object):
         keys_scale: float = 1.0,
         enabled: bool = True, 
         enabled_animatediff: bool = False,
-        adain_queries: bool = True,
-        adain_keys: bool = True,
+        adain_queries: bool = False,
+        adain_keys: bool = False,
         adain_values: bool = False 
     ):
         self.module_self = module_self
@@ -75,8 +75,10 @@ class VisualStyleProcessor(object):
             if self.adain_values:
                 v = adain(v)
             
-            k = concat_first(k, -2, self.keys_scale)
-            v = concat_first(v, -2)
+            k, v = swapping_attention(k, v)
+
+            #k = concat_first(k, -2, self.keys_scale)
+            #v = concat_first(v, -2)
 
         if mask is None:
             out = optimized_attention(q, k, v, self.module_self.heads)

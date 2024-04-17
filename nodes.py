@@ -19,8 +19,11 @@ class ApplyVisualStyle:
                 "enabled": ("BOOLEAN", {"default": True}),
                 "denoise": ("FLOAT", {"default": 1., "min": 0., "max": 1., "step": 1e-2}),
                 "input_blocks": ("BOOLEAN", {"default": False}),
+                "skip_input_layers": ("INT", {"default": 24, "min": 0, "max": 48, "step": 1}),
                 "middle_block": ("BOOLEAN", {"default": False}),
+                "skip_middle_layers": ("INT", {"default": 1, "min": 0, "max": 2, "step": 1}),
                 "output_blocks": ("BOOLEAN", {"default": True}),
+                "skip_output_layers": ("INT", {"default": 24, "min": 0, "max": 72, "step": 1}),
             },
             "optional": {
                 "init_image": ("IMAGE",),
@@ -64,15 +67,37 @@ class ApplyVisualStyle:
         input_blocks,
         middle_block,
         output_blocks,
-        init_image = None
+        init_image = None,
+        skip_input_layers=0,
+        skip_middle_layers=0,
+        skip_output_layers=0
+
     ):
         reference_samples = reference_latent["samples"]
         block_choices = self.get_block_choices(input_blocks, middle_block, output_blocks)
 
-        for n, m in model.model.diffusion_model.named_modules():
-            if m.__class__.__name__  == "CrossAttention":
-                is_enabled = self.activate_block_choice(n, block_choices)
 
+        layer_indexes = {
+            "input": 0,
+            "middle": 0,
+            "output": 0
+        }
+
+        n_skip_per_block = {
+            "input": skip_input_layers,
+            "middle": skip_middle_layers,
+            "output": skip_output_layers
+        }
+
+        class_names = set()
+        for n, m in model.model.diffusion_model.named_modules():
+            if m.__class__.__name__ == "CrossAttention":
+                is_enabled = self.activate_block_choice(n, block_choices)
+                if is_enabled:
+                    block_name = n.split("_")[0]
+                    if layer_indexes[block_name] < n_skip_per_block[block_name]:
+                        is_enabled = False
+                    layer_indexes[block_name] += 1
                 if hasattr(m.forward, 'module_self'):
                     m.forward.enabled = is_enabled and enabled
                 else:
@@ -84,15 +109,11 @@ class ApplyVisualStyle:
 
         latents = torch.zeros_like(reference_samples)
         latents = torch.cat([latents] * 2)
-
-        if denoise < 1.0:
-            latents[::1] = reference_samples[:1]
-        else:
-            latents[::2] = reference_samples
+        latents[0] = reference_samples
 
         denoise_mask = torch.ones_like(latents)[:, :1, ...] * denoise
 
-        denoise_mask[::2] = 0.
+        denoise_mask[0] = 0.
 
         return (model, positive_cat, negative_cat, {"samples": latents, "noise_mask": denoise_mask})
 

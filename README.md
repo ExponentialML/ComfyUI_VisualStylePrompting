@@ -22,8 +22,11 @@ This has currently only been tested with 1.5 based models.
 - `enabled`: Enables or disables the effect. Note that this node will still be hooked even after disabling unless you remove it.
 - `denoise`: Works the same way Img2Img works, but utilized with reference and / or init images (this is experimental).
 - `input_blocks`: Focuses attention on the encoder layers.
+- `skip_input_layers`: Number of layers in the input block that will **not** have swapping self-attention applied to them.
 - `middle_block`: Focuses attention on the middle layers.
+- `skip_middle_layers`: Number of layers in the middle block that will **not** have swapping self-attention applied to them.
 - `output_blocks`: Focuses attention on the decoder layers.
+- `skip_output_layers`: Number of layers in the output block that will **not** have swapping self-attention applied to them.
 
 > [!TIP]
 > In order to get the best results (matching legacy functionality), you must use the same prompt for `positive` and `reference_cond`.

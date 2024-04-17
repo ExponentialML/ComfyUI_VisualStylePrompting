@@ -5,18 +5,6 @@ from dataclasses import dataclass
 
 T = torch.Tensor
 
-@dataclass(frozen=True)
-class StyleAlignedArgs:
-    share_group_norm: bool = True
-    share_layer_norm: bool = True,
-    share_attention: bool = True
-    adain_queries: bool = True
-    adain_keys: bool = True
-    adain_values: bool = False
-    full_attention_share: bool = False
-    keys_scale: float = 1.
-    only_self_level: float = 0.
-
 def expand_first(feat: T, scale=1., ) -> T:
     b = feat.shape[0]
     feat_style = torch.stack((feat[0], feat[b // 2])).unsqueeze(1)
