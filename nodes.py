@@ -2,7 +2,7 @@ import comfy
 import torch
 
 from .utils.attention_functions import VisualStyleProcessor
-from .utils.cond_functions import copy_cond
+from .utils.cond_functions import cat_cond
 
 
 class ApplyVisualStyle:
@@ -11,8 +11,8 @@ class ApplyVisualStyle:
         return {
             "required": {
                 "model": ("MODEL",),
-                "vae": ("VAE", ),
-                "reference_image": ("IMAGE",),
+                "clip": ("CLIP",),
+                "reference_latent": ("LATENT",),
                 "reference_cond": ("CONDITIONING",),
                 "positive": ("CONDITIONING",),
                 "negative": ("CONDITIONING",),
@@ -57,8 +57,8 @@ class ApplyVisualStyle:
     def apply_visual_style_prompt(
         self,
         model: comfy.model_patcher.ModelPatcher,
-        vae,
-        reference_image,
+        clip,
+        reference_latent,
         reference_cond,
         positive,
         negative,
@@ -73,12 +73,7 @@ class ApplyVisualStyle:
         skip_output_layers=0
 
     ):
-        positive = copy_cond(positive)
-        reference_cond = copy_cond(reference_cond)
-        negative = copy_cond(negative)
-
-        reference_latent = vae.encode(reference_image[:,:,:,:3])
-
+        reference_samples = reference_latent["samples"]
         block_choices = self.get_block_choices(input_blocks, middle_block, output_blocks)
 
 
@@ -109,18 +104,18 @@ class ApplyVisualStyle:
                     processor = VisualStyleProcessor(m, enabled=is_enabled)
                     setattr(m, 'forward', processor)
 
-        positive[0][0] = torch.cat([reference_cond[0][0], positive[0][0]])
-        negative[0][0] = torch.cat([negative[0][0]] * 2)
+        positive_cat = cat_cond(clip, reference_cond, positive)
+        negative_cat = cat_cond(clip, negative, negative)
 
-        latents = torch.zeros_like(reference_latent)
+        latents = torch.zeros_like(reference_samples)
         latents = torch.cat([latents] * 2)
-        latents[0] = reference_latent
+        latents[0] = reference_samples
 
         denoise_mask = torch.ones_like(latents)[:, :1, ...] * denoise
 
         denoise_mask[0] = 0.
 
-        return (model, positive, negative, {"samples": latents, "noise_mask": denoise_mask})
+        return (model, positive_cat, negative_cat, {"samples": latents, "noise_mask": denoise_mask})
 
 NODE_CLASS_MAPPINGS = {
     "ApplyVisualStyle": ApplyVisualStyle,
