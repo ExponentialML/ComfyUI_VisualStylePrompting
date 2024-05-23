@@ -1,0 +1,14 @@
+[project]
+name = "comfyui_visualstyleprompting"
+description = "ComfyUI Version of '[a/Visual Style Prompting with Swapping Self-Attention](https://github.com/naver-ai/Visual-Style-Prompting)'"
+version = "1.0.0"
+license = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/ExponentialML/ComfyUI_VisualStylePrompting"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI_VisualStylePrompting"
+Icon = ""
